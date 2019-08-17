@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+  <id>Auto Customer Group</id>
+  <version>1.0.0</version>
+  <author>sv2109@gmail.com</author>
+  <link>http://sv2109.com</link>
+  <vqmver>2.3.0</vqmver>
+
+  <file path="admin/controller/setting/setting.php">
+      
+    <operation>
+
+      <search position="after"><![CDATA[
+        $this->data['entry_customer_group'] = $this->language->get('entry_customer_group');
+      ]]></search>
+
+      <add><![CDATA[
+        $this->data['entry_auto_customer_group'] = $this->language->get('entry_auto_customer_group');
+      ]]></add>
+
+    </operation>
+    <operation>
+
+      <search position="before"><![CDATA[
+        $this->load->model('sale/customer_group');
+      ]]></search>
+
+      <add><![CDATA[
+		if (isset($this->request->post['config_auto_customer_group_id'])) {
+			$this->data['config_auto_customer_group_id'] = $this->request->post['config_auto_customer_group_id'];
+		} else {
+			$this->data['config_auto_customer_group_id'] = $this->config->get('config_auto_customer_group_id');
+		}
+      ]]></add>
+
+    </operation>
+
+  </file>
+
+  <file path="admin/language/english/setting/setting.php">
+                
+    <operation>
+                
+      <search position="after"><![CDATA[
+        $_['entry_customer_group']
+      ]]></search>
+                        
+      <add><![CDATA[
+$_['entry_auto_customer_group']    = 'Automatic Customer Group:<br /><span class="help">Automatically add this group to customer after registration.</span>';
+      ]]></add>
+                        
+    </operation>
+                                
+  </file>        
+  
+  <file path="admin/language/russian/setting/setting.php">
+                
+    <operation>
+                
+      <search position="after"><![CDATA[
+        $_['entry_customer_group']
+      ]]></search>
+                        
+      <add><![CDATA[
+$_['entry_auto_customer_group']        = 'Автоматическая группа:<br /><span class="help">Автоматически присваивать эту группу пользователю после регистрации.</span>';
+      ]]></add>
+                        
+    </operation>
+                                
+  </file>        
+  
+  <file path="admin/view/template/setting/setting.tpl">
+                
+    <operation>
+                
+      <search position="before" offset="1"><![CDATA[
+        <td><?php echo $entry_customer_group_display; ?></td>
+      ]]></search>
+                        
+      <add><![CDATA[
+            <tr>
+              <td><?php echo $entry_auto_customer_group; ?></td>
+              <td><select name="config_auto_customer_group_id">
+                  <?php foreach ($customer_groups as $customer_group) { ?>
+                  <?php if ($customer_group['customer_group_id'] == $config_auto_customer_group_id) { ?>
+                  <option value="<?php echo $customer_group['customer_group_id']; ?>" selected="selected"><?php echo $customer_group['name']; ?></option>
+                  <?php } else { ?>
+                  <option value="<?php echo $customer_group['customer_group_id']; ?>"><?php echo $customer_group['name']; ?></option>
+                  <?php } ?>
+                  <?php } ?>
+                </select></td>
+            </tr>
+      ]]></add>
+                        
+    </operation>
+                                
+  </file>  
+        
+  <file path="catalog/model/account/customer.php">
+                
+    <operation>
+                
+      <search position="after"><![CDATA[
+       $customer_group_id = $data['customer_group_id'];
+      ]]></search>
+                        
+      <add><![CDATA[
+		} else if (!empty($this->config->get('config_auto_customer_group_id'))) {
+			$customer_group_id = $this->config->get('config_auto_customer_group_id');
+      ]]></add>
+                        
+    </operation>
+                                
+  </file>        
+  
+</modification>
